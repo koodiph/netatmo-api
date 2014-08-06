@@ -1,18 +1,24 @@
 #!/usr/bin/php
 <?php
-/*
-Authentication to Netatmo Server with the user credentials grant
-*/
-require_once 'NAApiClient.php';
-require_once 'Config.php';
+
+/**
+ * Authentication to Netatmo Server with the user credentials grant
+ */
+
+namespace Netatmo\API\PHP\Example\Cli\Client;
+
+use Netatmo\API\PHP\Api\Client;
+use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
+use Netatmo\API\PHP\Common\Scopes;
+use Netatmo\API\PHP\Example\Config;
 
 $scope = NAScopes::SCOPE_READ_THERM." ".NAScopes::SCOPE_WRITE_THERM;
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password, "scope" => $scope));
 
 try {
-    $tokens = $client->getAccessToken();        
-    
+    $tokens = $client->getAccessToken();
+
 }
 catch(NAClientException $ex) {
     echo "An error happend while trying to retrieve your tokens\n";
@@ -91,6 +97,3 @@ if(isset($devicelist["devices"]) && isset($devicelist["devices"][0])){
         echo ("OK\n");
     }
 }
-
-
-?>

@@ -1,5 +1,6 @@
 <?php
-require_once 'AppliCommonPublic.php';
+
+namespace Netatmo\API\PHP\Api;
 
 define('CURL_ERROR_TYPE', 0);
 define('API_ERROR_TYPE',1);//error return from api
@@ -11,81 +12,6 @@ define('BACKEND_BASE_URI', "http://api.netatmo.net/");
 define('BACKEND_SERVICES_URI', "http://api.netatmo.net/api");
 define('BACKEND_ACCESS_TOKEN_URI', "https://api.netatmo.net/oauth2/token");
 define('BACKEND_AUTHORIZE_URI', "https://api.netatmo.net/oauth2/authorize");
-
-/**
- * OAuth2.0 Netatmo exception handling
- *
- * @author Originally written by Thomas Rosenblatt <thomas.rosenblatt@netatmo.com>.
- */
-class NAClientException extends Exception
-{
-    public $error_type;
-    /**
-    * Make a new API Exception with the given result.
-    *
-    * @param $result
-    *   The result from the API server.
-    */
-    public function __construct($code, $message, $error_type)
-    {
-        $this->error_type = $error_type;
-        parent::__construct($message, $code);
-    }
-}
-
-
-class NAApiErrorType extends NAClientException
-{
-    public $http_code;
-    public $http_message;
-    public $result;
-    function __construct($code, $message, $result)
-    {
-        $this->http_code = $code;
-        $this->http_message = $message;
-        $this->result = $result;
-        if(isset($result["error"]) && is_array($result["error"]) && isset($result["error"]["code"]))
-        {
-            parent::__construct($result["error"]["code"], $result["error"]["message"], API_ERROR_TYPE);
-        }
-        else
-        {
-            parent::__construct($code, $message, API_ERROR_TYPE);
-        }
-    }
-}
-
-class NACurlErrorType extends NAClientException
-{
-    function __construct($code, $message)
-    {
-        parent::__construct($code, $message, CURL_ERROR_TYPE);
-    }
-}
-
-class NAJsonErrorType extends NAClientException
-{
-    function __construct($code, $message)
-    {
-        parent::__construct($code, $message, JSON_ERROR_TYPE);
-    }
-}
-
-class NAInternalErrorType extends NAClientException
-{
-    function __construct($message)
-    {
-        parent::__construct(0, $message, INTERNAL_ERROR_TYPE);
-    }
-}
-
-class NANotLoggedErrorType extends NAClientException
-{
-    function __construct($code, $message)
-    {
-        parent::__construct($code, $message, NOT_LOGGED_ERROR_TYPE);
-    }
-}
 
 /**
  * OAuth2.0 Netatmo client-side implementation.
@@ -328,7 +254,7 @@ class NAApiClient
 
         if ($result === FALSE)
         {
-            $e = new NACurlErrorType(curl_errno($ch), curl_error($ch));
+            $e = new Exception\NACurlErrorType(curl_errno($ch), curl_error($ch));
             curl_close($ch);
             throw $e;
         }
@@ -345,9 +271,9 @@ class NAApiClient
             {
                 if (preg_match('/^HTTP\/1.1 ([0-9]{3,3}) (.*)$/', $headers[0], $matches))
                 {
-                    throw new NAJsonErrorType($matches[1], $matches[2]);
+                    throw new Exception\NAJsonErrorType($matches[1], $matches[2]);
                 }
-                else throw new NAJsonErrorType(200, "OK");
+                else throw new Exception\NAJsonErrorType(200, "OK");
             }
             return $decode;
         }
@@ -360,9 +286,9 @@ class NAApiClient
             $decode = json_decode($body, TRUE);
             if(!$decode)
             {
-                throw new NAApiErrorType($matches[1], $matches[2], null);
+                throw new Exception\NAApiErrorType($matches[1], $matches[2], null);
             }
-            throw new NAApiErrorType($matches[1], $matches[2], $decode);
+            throw new Exception\NAApiErrorType($matches[1], $matches[2], $decode);
         }
     }
 
@@ -390,7 +316,7 @@ class NAApiClient
         {
             return $this->getAccessTokenFromPassword($this->getVariable('username'), $this->getVariable('password'));
         }
-        else throw new NAInternalErrorType("No access token stored");
+        else throw new Exception\NAInternalErrorType("No access token stored");
     }
 
 
@@ -452,7 +378,7 @@ class NAApiClient
             return $ret;
         }
         else
-            throw new NAInternalErrorType("missing args for getting authorization code grant");
+            throw new Exception\NAInternalErrorType("missing args for getting authorization code grant");
     }
 
   /**
@@ -493,7 +419,7 @@ class NAApiClient
             return $ret;
         }
         else
-            throw new NAInternalErrorType("missing args for getting password grant");
+            throw new Exception\NAInternalErrorType("missing args for getting password grant");
     }
 
     /**
@@ -548,7 +474,7 @@ class NAApiClient
             return $ret;
         }
         else
-            throw new NAInternalErrorType("missing args for getting refresh token grant");
+            throw new Exception\NAInternalErrorType("missing args for getting refresh token grant");
     }
 
     /**
@@ -574,9 +500,9 @@ class NAApiClient
         {
             $res = $this->getAccessToken();
         }
-        catch(NAApiErrorType $ex)
+        catch(Exception\NAApiErrorType $ex)
         {
-            throw new NANotLoggedErrorType($ex->getCode(), $ex->getMessage());
+            throw new Exception\NANotLoggedErrorType($ex->getCode(), $ex->getMessage());
         }
         $params["access_token"] = $res["access_token"];
         try
@@ -584,14 +510,14 @@ class NAApiClient
             $res = $this->makeRequest($path, $method, $params);
             return $res;
         }
-        catch(NAApiErrorType $ex)
+        catch(Exception\NAApiErrorType $ex)
         {
             if($reget_token == true)
             {
                 switch($ex->getCode())
                 {
-                    case NARestErrorCode::INVALID_ACCESS_TOKEN:
-                    case NARestErrorCode::ACCESS_TOKEN_EXPIRED:
+                    case Exception\NARestErrorCode::INVALID_ACCESS_TOKEN:
+                    case Exception\NARestErrorCode::ACCESS_TOKEN_EXPIRED:
                         //Ok token has expired let's retry once
                         if($this->refresh_token)
                         {
@@ -599,7 +525,7 @@ class NAApiClient
                             {
                                 $this->getAccessTokenFromRefreshToken();//exception will be thrown otherwise
                 }
-                catch(Exception $ex2)
+                catch(\Exception $ex2)
                             {
                                 //Invalid refresh token TODO: Throw a special exception
                                 throw $ex;
@@ -812,136 +738,3 @@ class NAApiClient
         return $url;
     }
 }
-/**
- * API Helpers
- *
- * @author Originally written by Fred Potter <fred.potter@netatmo.com>.
- */
-class NAApiHelper
-{
-    public $client;
-    public $devices = array();
-    public function __construct($client)
-    {
-        $this->client = $client;
-    }
-    public function api($method, $action, $params = array())
-    {
-        if(isset($this->client))
-            return $this->client->api($method, $action, $params);
-        else return NULL;
-    }
-    public function simplifyDeviceList($app_type = "app_station")
-    {
-        $this->devices = $this->client->api("devicelist", "POST", array("app_type" => $app_type));
-        foreach($this->devices["devices"] as $d => $device)
-        {
-            $moduledetails = array();
-            foreach($device["modules"] as $module)
-            {
-                foreach($this->devices["modules"] as $moduledetail)
-                {
-                    if($module == $moduledetail['_id'])
-                    {
-                        $moduledetails[] = $moduledetail;
-                    }
-                }
-            }
-            unset($this->devices["devices"][$d]["modules"]);
-            $this->devices["devices"][$d]["modules"]=$moduledetails;
-        }
-        unset($this->devices["modules"]);
-        return($this->devices);
-    }
-    public function getMeasure($device, $device_type, $date_begin, $module=null, $module_type = null)
-    {
-        $params = array("scale" => "max", "date_begin" => $date_begin, "date_end" => $date_begin+5*60, "device_id" => $device);
-        $result = array();
-        if(!is_null($module))
-        {
-            switch($module_type)
-            {
-                case "NAModule1":
-                    $params["type"] = "Temperature,Humidity";
-                break;
-                case "NAModule4":
-                    $params["type"] = "Temperature,CO2,Humidity";
-                break;
-                case "NAModule3":
-                    $params["type"] = "Rain";
-                break;
-            }
-
-            $params["module_id"] = $module;
-        }
-        else
-        {
-            switch($device_type)
-            {
-                case "NAMain":
-                    $params["type"] = "Temperature,CO2,Humidity,Pressure,Noise";
-                break;
-                case "NAPlug":
-                    $params["type"] = "Temperature,Sp_Temperature,BoilerOn,BoilerOff";
-            }
-        }
-        $types = explode(",", $params["type"]);
-        if($types === FALSE)
-        {
-            $types = array($params["type"]);
-        }
-        $meas = $this->client->api("getmeasure", "POST", $params);
-        if(isset($meas[0]))
-        {
-            $result['time'] = $meas[0]['beg_time'];
-            foreach($meas[0]['value'][0] as $key => $val)
-            {
-                $result[$types[$key]] = $val;
-            }
-        }
-        return($result);
-
-    }
-    public function getLastMeasures()
-    {
-        $results = array();
-        foreach ($this->devices["devices"] as $device)
-        {
-            $result = array();
-            if(isset($device["station_name"])) $result["station_name"] = $device["station_name"];
-            if(isset($device["modules"][0])) $result["modules"][0]["module_name"] = $device["module_name"];
-            $result["modules"][0] = array_merge($result["modules"][0], $device["dashboard_data"]);
-            foreach ($device["modules"] as $module)
-            {
-                $addmodule = array();
-                if(isset($module["module_name"])) $addmodule["module_name"] = $module["module_name"];
-                $addmodule = array_merge($addmodule, $module["dashboard_data"]);
-                $result["modules"][] = $addmodule;
-            }
-            $results[] = $result;
-        }
-        return($results);
-    }
-    public function getAllMeasures($date_begin)
-    {
-        $results = array();
-        foreach ($this->devices["devices"] as $device)
-        {
-            $result = array();
-            if(isset($device["station_name"])) $result["station_name"] = $device["station_name"];
-            if(isset($device["modules"][0])) $result["modules"][0]["module_name"] = $device["module_name"];
-            $result["modules"][0] = array_merge($result["modules"][0], $this->getMeasure($device["_id"], $device["type"], $date_begin));
-            foreach ($device["modules"] as $module)
-            {
-                $addmodule = array();
-                if(isset($module["module_name"])) $addmodule["module_name"] = $module["module_name"];
-                $addmodule = array_merge($addmodule, $this->getMeasure($device["_id"], $device["type"], $date_begin, $module["_id"], $module["type"]));
-                $result["modules"][] = $addmodule;
-            }
-            $results[] = $result;
-        }
-        return($results);    
-    }
-}
-
-?>

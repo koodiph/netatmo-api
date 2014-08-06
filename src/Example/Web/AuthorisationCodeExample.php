@@ -4,8 +4,13 @@ Authentication to Netatmo Server with the authorization grant
 This script has to be hosted by your web server in order to make it work
 */
 
-require_once 'NAApiClient.php';
-require_once 'Config.php';
+namespace Netatmo\API\PHP\Example\Web;
+
+use Netatmo\API\PHP\Api\Client;
+use Netatmo\API\PHP\Api\Helper;
+use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
+use Netatmo\API\PHP\Common\Scopes;
+use Netatmo\API\PHP\Example\Config;
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "scope" => NAScopes::SCOPE_READ_STATION));
 
@@ -15,7 +20,7 @@ if(isset($_GET["code"]))
     try
     {
 	    // Get the token for later usage.(you can store $tokens["refresh_token"] for retrieving a new access_token next time)
-	    $tokens = $client->getAccessToken();       
+	    $tokens = $client->getAccessToken();
     }
     catch(NAClientException $ex)
     {
@@ -71,7 +76,7 @@ else
            <input type='submit' name='start' value='Start'/>
        </form>
     </body>
-</html>     
+</html>
 <?php
     }
 }
@@ -96,7 +101,7 @@ function json_format($json)
             case '{':
             case '[':
                 if(!$in_string) {
-                    $new_json .= $char . "\n" . 
+                    $new_json .= $char . "\n" .
                     str_repeat($tab, $indent_level+1);
                     $indent_level++;
                 } else {
@@ -139,5 +144,3 @@ function json_format($json)
     }
     return $new_json;
 }
-
-?>

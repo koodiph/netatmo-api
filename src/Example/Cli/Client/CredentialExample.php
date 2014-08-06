@@ -1,10 +1,18 @@
 #!/usr/bin/php
 <?php
-/*
-Authentication to Netatmo Server with the user credentials grant
-*/
-require_once 'NAApiClient.php';
-require_once 'Config.php';
+
+/**
+ * Authentication to Netatmo Server with the user credentials grant
+ */
+
+namespace Netatmo\API\PHP\Example\Cli\Client;
+
+use Netatmo\API\PHP\Api\Client;
+use Netatmo\API\PHP\Api\Helper;
+use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
+use Netatmo\API\PHP\Common;
+use Netatmo\API\PHP\Example\Config;
+
 
 $scope = NAScopes::SCOPE_READ_STATION;
 
@@ -14,7 +22,7 @@ $helper = new NAApiHelper($client);
 try {
     $tokens = $client->getAccessToken();
 
-} catch(NAClientException $ex) {
+} catch(Api\Exception\NAClientException $ex) {
     echo "An error happend while trying to retrieve your tokens\n";
     exit(-1);
 }
@@ -43,6 +51,3 @@ echo ("---------------------\n");
 $mesures = $helper->getAllMeasures(mktime() - 86400);
 print_r($mesures);
 echo ("OK\n");
-
-
-?>
