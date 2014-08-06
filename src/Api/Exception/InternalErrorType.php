@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Api\Exception;
 
-class NAInternalErrorType extends NAClientException
+class InternalErrorType extends ClientException
 {
     function __construct($message)
     {

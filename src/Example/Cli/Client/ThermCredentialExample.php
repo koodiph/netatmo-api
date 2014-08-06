@@ -12,9 +12,9 @@ use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
 use Netatmo\API\PHP\Common\Scopes;
 use Netatmo\API\PHP\Example\Config;
 
-$scope = NAScopes::SCOPE_READ_THERM." ".NAScopes::SCOPE_WRITE_THERM;
+$scope = Scopes::SCOPE_READ_THERM." ".Scopes::SCOPE_WRITE_THERM;
 
-$client = new NAApiClient(array(
+$client = new Client(array(
     'client_id'     => $client_id,
     'client_secret' => $client_secret,
     'username'      => $test_username,
@@ -25,7 +25,7 @@ $client = new NAApiClient(array(
 try {
     $tokens = $client->getAccessToken();
 }
-catch(NAClientException $ex) {
+catch(ClientException $ex) {
     echo "An error happend while trying to retrieve your tokens\n";
     exit(-1);
 }

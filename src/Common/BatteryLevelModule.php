@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NABatteryLevelModule
+class BatteryLevelModule
 {
     /* Battery range: 6000 ... 3600 */
     const BATTERY_LEVEL_0 = 5500;/*full*/

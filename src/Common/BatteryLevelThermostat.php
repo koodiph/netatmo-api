@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NABatteryLevelThermostat
+class BatteryLevelThermostat
 {
     /* Battery range: 4500 ... 3000 */
     const THERMOSTAT_BATTERY_LEVEL_0 = 4100;/*full*/

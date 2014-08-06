@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NATimeBeforeDataExpire
+class TimeBeforeDataExpire
 {
     const TIME_BEFORE_UNKNONWN_THERMOSTAT = 7200;
     const TIME_BEFORE_UNKNONWN_STATION    = 86400;

@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NAClientErrorCode
+class ClientErrorCode
 {
     const OAUTH_INVALID_GRANT = -1;
     const OAUTH_OTHER         = -2;

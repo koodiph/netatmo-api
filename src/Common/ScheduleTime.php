@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NAScheduleTime
+class ScheduleTime
 {
     const WEEK_WAKEUP_TIME_DEFAULT          = 420;
     const WEEK_SLEEP_TIME_DEFAULT           = 1320;

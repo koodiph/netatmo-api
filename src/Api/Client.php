@@ -2,6 +2,8 @@
 
 namespace Netatmo\API\PHP\Api;
 
+use Netatmo\API\PHP\Common\RestErrorCode;
+
 define('CURL_ERROR_TYPE',       0);
 define('API_ERROR_TYPE',        1);//error return from api
 define('INTERNAL_ERROR_TYPE',   2); //error because internal state is not consistent
@@ -18,7 +20,7 @@ define('BACKEND_AUTHORIZE_URI', '   https://api.netatmo.net/oauth2/authorize');
  *
  * @author Originally written by Thomas Rosenblatt <thomas.rosenblatt@netatmo.com>.
  */
-class NAApiClient
+class Client
 {
     /**
      * Array of persistent variables stored.
@@ -226,7 +228,7 @@ class NAApiClient
      *   (optional) An initialized curl handle
      *
      * @return
-     *   The json_decoded result or NAClientException if pb happend
+     *   The json_decoded result or ClientException if pb happend
      */
     public function makeRequest($path, $method = 'GET', $params = array())
     {
@@ -285,7 +287,7 @@ class NAApiClient
 
         if ($result === FALSE)
         {
-            $e = new Exception\NACurlErrorType(curl_errno($ch), curl_error($ch));
+            $e = new Exception\CurlErrorType(curl_errno($ch), curl_error($ch));
             curl_close($ch);
             throw $e;
         }
@@ -302,11 +304,11 @@ class NAApiClient
             {
                 if (preg_match('/^HTTP\/1.1 ([0-9]{3,3}) (.*)$/', $headers[0], $matches))
                 {
-                    throw new Exception\NAJsonErrorType($matches[1], $matches[2]);
+                    throw new Exception\JsonErrorType($matches[1], $matches[2]);
                 }
                 else
                 {
-                    throw new Exception\NAJsonErrorType(200, 'OK');
+                    throw new Exception\JsonErrorType(200, 'OK');
                 }
             }
             return $decode;
@@ -320,9 +322,9 @@ class NAApiClient
             $decode = json_decode($body, TRUE);
             if (!$decode)
             {
-                throw new Exception\NAApiErrorType($matches[1], $matches[2], null);
+                throw new Exception\ApiErrorType($matches[1], $matches[2], null);
             }
-            throw new Exception\NAApiErrorType($matches[1], $matches[2], $decode);
+            throw new Exception\ApiErrorType($matches[1], $matches[2], $decode);
         }
     }
 
@@ -332,7 +334,7 @@ class NAApiClient
      * @return
      * A valid array containing at least an access_token as an index
      *  @throw
-     * A NAClientException if unable to retrieve an access_token
+     * A ClientException if unable to retrieve an access_token
      */
     public function getAccessToken()
     {
@@ -355,7 +357,7 @@ class NAApiClient
         }
         else
         {
-            throw new Exception\NAInternalErrorType('No access token stored');
+            throw new Exception\InternalErrorType('No access token stored');
         }
     }
 
@@ -400,7 +402,7 @@ class NAApiClient
      * @return
      *   A valid OAuth2.0 JSON decoded access token in associative array
      * @thrown
-     *  A NAClientException if unable to retrieve an access_token
+     *  A ClientException if unable to retrieve an access_token
      */
     private function getAccessTokenFromAuthorizationCode($code)
     {
@@ -427,7 +429,7 @@ class NAApiClient
         }
         else
         {
-            throw new Exception\NAInternalErrorType('missing args for getting authorization code grant');
+            throw new Exception\InternalErrorType('missing args for getting authorization code grant');
         }
     }
 
@@ -446,7 +448,7 @@ class NAApiClient
      * @return
      *   A valid OAuth2.0 JSON decoded access token in associative array
      * @thrown
-     *  A NAClientException if unable to retrieve an access_token
+     *  A ClientException if unable to retrieve an access_token
      */
     private function getAccessTokenFromPassword($username, $password)
     {
@@ -472,7 +474,7 @@ class NAApiClient
         }
         else
         {
-            throw new Exception\NAInternalErrorType('missing args for getting password grant');
+            throw new Exception\InternalErrorType('missing args for getting password grant');
         }
     }
 
@@ -491,7 +493,7 @@ class NAApiClient
      * @return
      *   A valid OAuth2.0 JSON decoded access token in associative array
      * @thrown
-     *  A NAClientException if unable to retrieve an access_token
+     *  A ClientException if unable to retrieve an access_token
      */
     private function getAccessTokenFromRefreshToken()
     {
@@ -532,7 +534,7 @@ class NAApiClient
         }
         else
         {
-            throw new Exception\NAInternalErrorType('missing args for getting refresh token grant');
+            throw new Exception\InternalErrorType('missing args for getting refresh token grant');
         }
     }
 
@@ -559,9 +561,9 @@ class NAApiClient
         {
             $res = $this->getAccessToken();
         }
-        catch(Exception\NAApiErrorType $ex)
+        catch(Exception\ApiErrorType $ex)
         {
-            throw new Exception\NANotLoggedErrorType($ex->getCode(), $ex->getMessage());
+            throw new Exception\NotLoggedErrorType($ex->getCode(), $ex->getMessage());
         }
         $params['access_token'] = $res['access_token'];
         try
@@ -569,14 +571,14 @@ class NAApiClient
             $res = $this->makeRequest($path, $method, $params);
             return $res;
         }
-        catch(Exception\NAApiErrorType $ex)
+        catch(Exception\ApiErrorType $ex)
         {
             if ($reget_token == true)
             {
                 switch ($ex->getCode())
                 {
-                    case Exception\NARestErrorCode::INVALID_ACCESS_TOKEN:
-                    case Exception\NARestErrorCode::ACCESS_TOKEN_EXPIRED:
+                    case RestErrorCode::INVALID_ACCESS_TOKEN:
+                    case RestErrorCode::ACCESS_TOKEN_EXPIRED:
                         //Ok token has expired let's retry once
                         if ($this->refresh_token)
                         {
@@ -632,7 +634,7 @@ class NAApiClient
      * @return
      *   The JSON decoded body response object.
      *
-     * @throws NAClientException
+     * @throws ClientException
      */
     public function api($path, $method = 'GET', $params = array(), $secure = false)
     {
@@ -674,7 +676,7 @@ class NAApiClient
      * @return
      *   The JSON decoded response object.
      *
-     * @throws NAClientException
+     * @throws ClientException
      */
     public function noTokenApi($path, $method = 'GET', $params = array())
     {

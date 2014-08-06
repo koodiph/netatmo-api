@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Api\Exception;
 
-class NACurlErrorType extends NAClientException
+class CurlErrorType extends ClientException
 {
     function __construct($code, $message)
     {

@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NARadioRssiTreshold
+class RadioRssiTreshold
 {
     const RADIO_THRESHOLD_0 = 90;
     const RADIO_THRESHOLD_1 = 80;

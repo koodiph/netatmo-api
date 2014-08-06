@@ -7,7 +7,7 @@ namespace Netatmo\API\PHP\Api\Exception;
  *
  * @author Originally written by Thomas Rosenblatt <thomas.rosenblatt@netatmo.com>.
  */
-class NAClientException extends Exception
+class ClientException extends Exception
 {
 	public $error_type;
 

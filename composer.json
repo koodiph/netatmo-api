@@ -7,5 +7,10 @@
             "email": "dranzd@gmail.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Netatmo\\API\\PHP": "src"
+        }
+    }
 }

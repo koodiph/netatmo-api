@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Api\Exception;
 
-class NANotLoggedErrorType extends NAClientException
+class NotLoggedErrorType extends ClientException
 {
     function __construct($code, $message)
     {

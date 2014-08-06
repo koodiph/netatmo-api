@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NARestErrorCode
+class RestErrorCode
 {
     const ACCESS_TOKEN_MISSING            = 1;
     const INVALID_ACCESS_TOKEN            = 2;

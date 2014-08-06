@@ -7,7 +7,7 @@ namespace Netatmo\API\PHP\Api;
  *
  * @author Originally written by Fred Potter <fred.potter@netatmo.com>.
  */
-class NAApiHelper
+class Helper
 {
     public $client;
     public $devices = array();

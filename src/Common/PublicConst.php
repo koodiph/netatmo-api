@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Common;
 
-class NAPublicConst
+class PublicConst
 {
     const UNIT_METRIC            = 0;
     const UNIT_US                = 1;
