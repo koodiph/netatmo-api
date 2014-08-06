@@ -14,11 +14,16 @@ use Netatmo\API\PHP\Example\Config;
 
 $scope = NAScopes::SCOPE_READ_THERM." ".NAScopes::SCOPE_WRITE_THERM;
 
-$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password, "scope" => $scope));
+$client = new NAApiClient(array(
+    'client_id'     => $client_id,
+    'client_secret' => $client_secret,
+    'username'      => $test_username,
+    'password'      => $test_password,
+    'scope'         => $scope,
+));
 
 try {
     $tokens = $client->getAccessToken();
-
 }
 catch(NAClientException $ex) {
     echo "An error happend while trying to retrieve your tokens\n";
@@ -30,7 +35,6 @@ $user = $client->api("getuser", "POST");
 echo ("-------------\n");
 echo ("- User Info -\n");
 echo ("-------------\n");
-//print_r($user);
 echo ("OK\n");
 echo ("---------------\n");
 echo ("- Device List -\n");

@@ -18,7 +18,13 @@ use Netatmo\API\PHP\Common\Scopes;
 use Netatmo\API\PHP\Example\Config;
 
 $scope = NAScopes::SCOPE_READ_THERM." ".NAScopes::SCOPE_WRITE_THERM;
-$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password, "scope" => $scope));
+$client = new NAApiClient(array(
+    'client_id'     => $client_id,
+    'client_secret' => $client_secret,
+    'username'      => $test_username,
+    'password'      => $test_password,
+    'scope'         => $scope,
+));
 
 /*Retrieve user access_token*/
 /* This user is the user created to access your partner application */

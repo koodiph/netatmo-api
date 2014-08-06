@@ -12,7 +12,11 @@ use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
 use Netatmo\API\PHP\Common\Scopes;
 use Netatmo\API\PHP\Example\Config;
 
-$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "scope" => NAScopes::SCOPE_READ_STATION));
+$client = new NAApiClient(array(
+    'client_id'     => $client_id,
+    'client_secret' => $client_secret,
+    'scope'         => NAScopes::SCOPE_READ_STATION,
+));
 
 //Test if code is provided in get parameters (that means user has already accepted the app and has been redirected here)
 if(isset($_GET["code"]))

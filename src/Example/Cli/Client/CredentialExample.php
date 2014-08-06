@@ -16,12 +16,17 @@ use Netatmo\API\PHP\Example\Config;
 
 $scope = NAScopes::SCOPE_READ_STATION;
 
-$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password, "scope" => $scope));
+$client = new NAApiClient(array(
+    'client_id'     => $client_id,
+    'client_secret' => $client_secret,
+    'username'      => $test_username,
+    'password'      => $test_password,
+    'scope'         => $scope,
+));
 $helper = new NAApiHelper($client);
 
 try {
     $tokens = $client->getAccessToken();
-
 } catch(Api\Exception\NAClientException $ex) {
     echo "An error happend while trying to retrieve your tokens\n";
     exit(-1);
@@ -32,7 +37,6 @@ $user = $helper->api("getuser", "POST");
 echo ("-------------\n");
 echo ("- User Info -\n");
 echo ("-------------\n");
-//print_r($user);
 echo ("OK\n");
 echo ("---------------\n");
 echo ("- Device List -\n");
