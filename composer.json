@@ -1,0 +1,11 @@
+{
+    "name": "dranzd/netatmo-api-php",
+    "description": "Netatmo Weather Station API client implementation - PHP SDK",
+    "authors": [
+        {
+            "name": "Dranzd Viper",
+            "email": "dranzd@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
