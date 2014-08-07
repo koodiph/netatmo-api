@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Api\Exception;
 
-class ApiErrorType extends ClientException
+class ApiErrorTypeException extends ClientException
 {
     public $http_code;
     public $http_message;

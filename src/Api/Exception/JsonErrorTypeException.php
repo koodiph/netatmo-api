@@ -2,7 +2,7 @@
 
 namespace Netatmo\API\PHP\Api\Exception;
 
-class JsonErrorType extends ClientException
+class JsonErrorTypeException extends ClientException
 {
     function __construct($code, $message)
     {
