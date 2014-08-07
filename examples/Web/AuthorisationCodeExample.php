@@ -1,32 +1,33 @@
 <?php
-/*
-Authentication to Netatmo Server with the authorization grant
-This script has to be hosted by your web server in order to make it work
-*/
 
-namespace Netatmo\API\PHP\Example\Web;
+/**
+ * Authentication to Netatmo Server with the authorization grant
+ * This script has to be hosted by your web server in order to make it work
+ */
+var_dump($_GET, $_POST);die();
+include __DIR__ . '/../../vendor/autoload.php';
+include __DIR__ . '/../config.php';
 
 use Netatmo\API\PHP\Api\Client;
 use Netatmo\API\PHP\Api\Helper;
-use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
+use Netatmo\API\PHP\Api\Exception\ClientException;
 use Netatmo\API\PHP\Common\Scopes;
-use Netatmo\API\PHP\Example\Config;
 
-$client = new NAApiClient(array(
+$client = new Client(array(
     'client_id'     => $client_id,
     'client_secret' => $client_secret,
-    'scope'         => NAScopes::SCOPE_READ_STATION,
+    'scope'         => Scopes::SCOPE_READ_STATION,
 ));
 
 //Test if code is provided in get parameters (that means user has already accepted the app and has been redirected here)
-if(isset($_GET["code"]))
+if (isset($_GET["code"]))
 {
     try
     {
 	    // Get the token for later usage.(you can store $tokens["refresh_token"] for retrieving a new access_token next time)
 	    $tokens = $client->getAccessToken();
     }
-    catch(NAClientException $ex)
+    catch (ClientException $ex)
     {
         echo "An error happend while trying to retrieve your tokens\n";
         echo "Reason : ".$ex->getMessage()."\n";
@@ -34,7 +35,7 @@ if(isset($_GET["code"]))
     }
     try
     {
-        $helper = new NAApiHelper($client);
+        $helper = new Helper($client);
 
         $user = $helper->api("getuser", "POST");
         $devicelist = $helper->simplifyDeviceList();
@@ -48,7 +49,7 @@ if(isset($_GET["code"]))
 <?php
 
     }
-    catch(NAClientException $ex)
+    catch (ClientException $ex)
     {
         echo "An error happend while trying to retrieve your last measures\n";
         echo $ex->getMessage()."\n";
@@ -56,14 +57,18 @@ if(isset($_GET["code"]))
 }
 else
 {
-    if(isset($_GET["error"]))
+    if (isset($_GET["error"]))
     {
-        if($_GET["error"] == "access_denied")
+        if ($_GET["error"] == "access_denied")
+        {
             echo "You refused to let application access your netatmo data\n";
+        }
         else
+        {
             echo "An error happend\n";
+        }
     }
-    else if(isset($_GET["start"]))
+    else if (isset($_GET["start"]))
     {
         //Ok redirect to Netatmo Authorize URL
         $redirect_url = $client->getAuthorizeUrl();
@@ -92,19 +97,19 @@ else
  */
 function json_format($json)
 {
-    $tab = "    ";
-    $new_json = "";
+    $tab          = "    ";
+    $new_json     = "";
     $indent_level = 0;
-    $in_string = FALSE;
+    $in_string    = FALSE;
 
     $len = strlen($json);
 
-    for($c = 0; $c < $len; $c++) {
+    for ($c = 0; $c < $len; $c++) {
         $char = $json[$c];
-        switch($char) {
+        switch ($char) {
             case '{':
             case '[':
-                if(!$in_string) {
+                if (!$in_string) {
                     $new_json .= $char . "\n" .
                     str_repeat($tab, $indent_level+1);
                     $indent_level++;
@@ -114,7 +119,7 @@ function json_format($json)
                 break;
             case '}':
             case ']':
-                if(!$in_string) {
+                if (!$in_string) {
                     $indent_level--;
                     $new_json .= "\n".str_repeat($tab, $indent_level).$char;
                 } else {
@@ -122,23 +127,23 @@ function json_format($json)
                 }
                 break;
             case ',':
-                if(!$in_string) {
+                if (!$in_string) {
                     $new_json .= ",\n" . str_repeat($tab, $indent_level);
                 } else {
                     $new_json .= $char;
                 }
                 break;
             case ':':
-                if(!$in_string) {
+                if (!$in_string) {
                     $new_json .= ": ";
                 } else {
                     $new_json .= $char;
                 }
                 break;
             case '"':
-                if($c==0){
+                if ($c == 0){
                     $in_string = TRUE;
-                }elseif($c > 0 && $json[$c-1] != '\\') {
+                } elseif ($c > 0 && $json[$c-1] != '\\') {
                     $in_string = !$in_string;
                 }
             default:

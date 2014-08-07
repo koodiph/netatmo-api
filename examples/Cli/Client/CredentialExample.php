@@ -5,13 +5,13 @@
  * Authentication to Netatmo Server with the user credentials grant
  */
 
-namespace Netatmo\API\PHP\Example\Cli\Client;
+include __DIR__ . '/../../../vendor/autoload.php';
+include __DIR__ . '/../../config.php';
 
 use Netatmo\API\PHP\Api\Client;
 use Netatmo\API\PHP\Api\Helper;
-use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
+use Netatmo\API\PHP\Api\Exception\ClientException;
 use Netatmo\API\PHP\Common\Scopes;
-use Netatmo\API\PHP\Example\Config;
 
 $scope = Scopes::SCOPE_READ_STATION;
 
@@ -26,7 +26,7 @@ $helper = new Helper($client);
 
 try {
     $tokens = $client->getAccessToken();
-} catch(Api\Exception\ClientException $ex) {
+} catch(ClientException $ex) {
     echo "An error happend while trying to retrieve your tokens\n";
     exit(-1);
 }

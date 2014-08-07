@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 /**
@@ -10,12 +11,12 @@
  * - finally for each device we will set device in frost-guard mode
  */
 
-namespace Netatmo\API\PHP\Example\Cli\Client;
+include __DIR__ . '/../../../vendor/autoload.php';
+include __DIR__ . '/../../config.php';
 
 use Netatmo\API\PHP\Api\Client;
-use Netatmo\API\PHP\Api\Exception\Client AS ClientException;
+use Netatmo\API\PHP\Api\Exception\ClientException;
 use Netatmo\API\PHP\Common\Scopes;
-use Netatmo\API\PHP\Example\Config;
 
 $scope = Scopes::SCOPE_READ_THERM." ".Scopes::SCOPE_WRITE_THERM;
 $client = new Client(array(

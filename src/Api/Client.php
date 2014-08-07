@@ -10,10 +10,10 @@ define('INTERNAL_ERROR_TYPE',   2); //error because internal state is not consis
 define('JSON_ERROR_TYPE',       3);
 define('NOT_LOGGED_ERROR_TYPE', 4); //unable to get access token
 
-define('BACKEND_BASE_URI', '        http://api.netatmo.net/');
-define('BACKEND_SERVICES_URI', '    http://api.netatmo.net/api');
+define('BACKEND_BASE_URI',         'http://api.netatmo.net/');
+define('BACKEND_SERVICES_URI',     'http://api.netatmo.net/api');
 define('BACKEND_ACCESS_TOKEN_URI', 'https://api.netatmo.net/oauth2/token');
-define('BACKEND_AUTHORIZE_URI', '   https://api.netatmo.net/oauth2/authorize');
+define('BACKEND_AUTHORIZE_URI',    'https://api.netatmo.net/oauth2/authorize');
 
 /**
  * OAuth2.0 Netatmo client-side implementation.
@@ -287,7 +287,7 @@ class Client
 
         if ($result === FALSE)
         {
-            $e = new Exception\CurlErrorType(curl_errno($ch), curl_error($ch));
+            $e = new Exception\CurlErrorTypeException(curl_errno($ch), curl_error($ch));
             curl_close($ch);
             throw $e;
         }
@@ -304,11 +304,11 @@ class Client
             {
                 if (preg_match('/^HTTP\/1.1 ([0-9]{3,3}) (.*)$/', $headers[0], $matches))
                 {
-                    throw new Exception\JsonErrorType($matches[1], $matches[2]);
+                    throw new Exception\JsonErrorTypeException($matches[1], $matches[2]);
                 }
                 else
                 {
-                    throw new Exception\JsonErrorType(200, 'OK');
+                    throw new Exception\JsonErrorTypeException(200, 'OK');
                 }
             }
             return $decode;
@@ -322,9 +322,9 @@ class Client
             $decode = json_decode($body, TRUE);
             if (!$decode)
             {
-                throw new Exception\ApiErrorType($matches[1], $matches[2], null);
+                throw new Exception\ApiErrorTypeException($matches[1], $matches[2], null);
             }
-            throw new Exception\ApiErrorType($matches[1], $matches[2], $decode);
+            throw new Exception\ApiErrorTypeException($matches[1], $matches[2], $decode);
         }
     }
 
@@ -357,7 +357,7 @@ class Client
         }
         else
         {
-            throw new Exception\InternalErrorType('No access token stored');
+            throw new Exception\InternalErrorTypeException('No access token stored');
         }
     }
 
@@ -429,7 +429,7 @@ class Client
         }
         else
         {
-            throw new Exception\InternalErrorType('missing args for getting authorization code grant');
+            throw new Exception\InternalErrorTypeException('missing args for getting authorization code grant');
         }
     }
 
@@ -474,7 +474,7 @@ class Client
         }
         else
         {
-            throw new Exception\InternalErrorType('missing args for getting password grant');
+            throw new Exception\InternalErrorTypeException('missing args for getting password grant');
         }
     }
 
@@ -534,7 +534,7 @@ class Client
         }
         else
         {
-            throw new Exception\InternalErrorType('missing args for getting refresh token grant');
+            throw new Exception\InternalErrorTypeException('missing args for getting refresh token grant');
         }
     }
 
@@ -561,9 +561,9 @@ class Client
         {
             $res = $this->getAccessToken();
         }
-        catch(Exception\ApiErrorType $ex)
+        catch(Exception\ApiErrorTypeException $ex)
         {
-            throw new Exception\NotLoggedErrorType($ex->getCode(), $ex->getMessage());
+            throw new Exception\NotLoggedErrorTypeException($ex->getCode(), $ex->getMessage());
         }
         $params['access_token'] = $res['access_token'];
         try
@@ -571,7 +571,7 @@ class Client
             $res = $this->makeRequest($path, $method, $params);
             return $res;
         }
-        catch(Exception\ApiErrorType $ex)
+        catch(Exception\ApiErrorTypeException $ex)
         {
             if ($reget_token == true)
             {
