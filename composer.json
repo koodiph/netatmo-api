@@ -10,7 +10,7 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "Netatmo\\API\\PHP": "src"
+            "Netatmo\\API\\PHP\\": "src"
         }
     }
 }
