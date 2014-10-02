@@ -4,17 +4,6 @@ namespace Netatmo\API\PHP\Api;
 
 use Netatmo\API\PHP\Common\RestErrorCode;
 
-define('CURL_ERROR_TYPE',       0);
-define('API_ERROR_TYPE',        1);//error return from api
-define('INTERNAL_ERROR_TYPE',   2); //error because internal state is not consistent
-define('JSON_ERROR_TYPE',       3);
-define('NOT_LOGGED_ERROR_TYPE', 4); //unable to get access token
-
-define('BACKEND_BASE_URI',         'http://api.netatmo.net/');
-define('BACKEND_SERVICES_URI',     'http://api.netatmo.net/api');
-define('BACKEND_ACCESS_TOKEN_URI', 'https://api.netatmo.net/oauth2/token');
-define('BACKEND_AUTHORIZE_URI',    'https://api.netatmo.net/oauth2/authorize');
-
 /**
  * OAuth2.0 Netatmo client-side implementation.
  *
@@ -28,6 +17,11 @@ class Client
     protected $conf = array();
     protected $refresh_token;
     protected $access_token;
+
+    const BACKEND_BASE_URI         = 'http://api.netatmo.net/';
+    const BACKEND_SERVICES_URI     = 'http://api.netatmo.net/api';
+    const BACKEND_ACCESS_TOKEN_URI = 'https://api.netatmo.net/oauth2/token';
+    const BACKEND_AUTHORIZE_URI    = 'https://api.netatmo.net/oauth2/authorize';
 
     /**
      * Returns a persistent variable.
@@ -169,10 +163,10 @@ class Client
 
         // We must set uri first.
         $uri = array(
-            'base_uri'         => BACKEND_BASE_URI,
-            'services_uri'     => BACKEND_SERVICES_URI,
-            'access_token_uri' => BACKEND_ACCESS_TOKEN_URI,
-            'authorize_uri'    => BACKEND_AUTHORIZE_URI,
+            'base_uri'         => static::BACKEND_BASE_URI,
+            'services_uri'     => static::BACKEND_SERVICES_URI,
+            'access_token_uri' => static::BACKEND_ACCESS_TOKEN_URI,
+            'authorize_uri'    => static::BACKEND_AUTHORIZE_URI,
         );
         foreach ($uri as $key => $val)
         {
