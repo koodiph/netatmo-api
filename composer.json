@@ -3,8 +3,8 @@
     "description": "Netatmo Weather Station API client implementation - PHP SDK",
     "authors": [
         {
-            "name": "Dranzd Viper",
-            "email": "dranzd@gmail.com"
+            "name": "Koodi",
+            "email": "hello@koodi.ph"
         }
     ],
     "minimum-stability": "stable",
