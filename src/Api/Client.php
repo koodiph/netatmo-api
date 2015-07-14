@@ -18,6 +18,8 @@ class Client
     protected $refresh_token;
     protected $access_token;
 
+    public $errors = array();
+
     const BACKEND_BASE_URI         = 'https://api.netatmo.net/';
     const BACKEND_SERVICES_URI     = 'https://api.netatmo.net/api';
     const BACKEND_ACCESS_TOKEN_URI = 'https://api.netatmo.net/oauth2/token';
@@ -557,7 +559,9 @@ class Client
         }
         catch(Exception\ApiErrorTypeException $ex)
         {
-            throw new Exception\NotLoggedErrorTypeException($ex->getCode(), $ex->getMessage());
+            $this->errors[] = $ex->getMessage();
+            return false;
+            // throw new Exception\NotLoggedErrorTypeException($ex->getCode(), $ex->getMessage());
         }
         $params['access_token'] = $res['access_token'];
         try
