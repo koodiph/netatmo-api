@@ -1,5 +1,5 @@
 {
-    "name": "dranzd/netatmo-api-php",
+    "name": "koodiph/netatmo-api",
     "description": "Netatmo Weather Station API client implementation - PHP SDK",
     "authors": [
         {
