@@ -18,8 +18,8 @@ class Client
     protected $refresh_token;
     protected $access_token;
 
-    const BACKEND_BASE_URI         = 'http://api.netatmo.net/';
-    const BACKEND_SERVICES_URI     = 'http://api.netatmo.net/api';
+    const BACKEND_BASE_URI         = 'https://api.netatmo.net/';
+    const BACKEND_SERVICES_URI     = 'https://api.netatmo.net/api';
     const BACKEND_ACCESS_TOKEN_URI = 'https://api.netatmo.net/oauth2/token';
     const BACKEND_AUTHORIZE_URI    = 'https://api.netatmo.net/oauth2/authorize';
 
